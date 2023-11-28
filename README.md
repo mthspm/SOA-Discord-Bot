@@ -59,4 +59,4 @@ MIT License
 
 ## Credits
 
-Develoepd by @mthspm =)
+Developed by @mthspm =)

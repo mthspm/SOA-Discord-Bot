@@ -14,12 +14,17 @@ A discord bot written in python
 Clone a development version of this repository locally
 
     git clone git://github.com/mthspm/SOA-DISCORD-Bot.git
+    
+    
+Make sure a folder named 'logs' exists on SOA-DISCORD-BOT/app
+
 
 Once you have a copy of the source, you can embed it in your Python package,
 or install it into your site-packages easily
 
     $ cd repository_path
     $ pip3 install -r requirements.txt
+
 
 NOTE: In order to run the music functions, you will also need to download ffmpeg and
 add the path of the 'bin' ffmpeg folder to the PATH on environment variable,

@@ -1,0 +1,76 @@
+{
+    "cs2": {
+        "name": "Counter-Strike 2",
+        "editor": "mathlokz",
+        "date": "2023-11-20 23:23:25",
+        "image": "https://styles.redditmedia.com/t5_6himry/styles/communityIcon_6k029qv05zqb1.png",
+        "video": {
+            "Boots Player Contrast": "ENABLED",
+            "Wait for Vertical Sync": "DISABLED",
+            "Current Video Values Preset": "CUSTOM",
+            "Multisampling Anti-Aliasing Mode": "CNAA2",
+            "Global Shadow Quality": "HIGH",
+            "Model/Texture Detail": "MEDIUM",
+            "Texture Filtering Mode": "ANISOTROPIC_4X",
+            "Shader Detail": "LOW",
+            "Particle Detail": "123456",
+            "Ambient Occlusion": "DISABLED",
+            "High Dynamic Range": "PERFORMANCE",
+            "FidelityFX Super Resolution": "DISABLED (HIGHEST QUALITY)",
+            "NVIDIA Reflex Low Latency": "ENABLED"
+        },
+        "binds": {
+            "jumpthrow": "bind alias 12345 piru torto",
+            "jumpthrow2": "",
+            "jumpthrow3": "",
+            "jumpthrow4": "teste"
+        },
+        "crosshair": {
+            "cl_crosshair_drawoutline": "1",
+            "cl_crosshair_outlinethickness": "1",
+            "cl_crosshairalpha": "254",
+            "cl_crosshaircolor": "5",
+            "cl_crosshaircolor_b": "255",
+            "cl_crosshaircolor_g": "255"
+        }
+    },
+    "dota2": {
+        "name": "Dota 2",
+        "editor": "mathlokz",
+        "date": "2023-11-16 07:27:54",
+        "image": "https://e7.pngegg.com/pngimages/438/512/png-clipart-dota-2-logo-dota-2-counter-strike-global-offensive-defense-of-the-ancients-league-of-legends-the-international-dota-emblem-text.png",
+        "video": {
+            "Boots Player Contrast": "ENABLED",
+            "Wait for Vertical Sync": "DISABLED",
+            "Current Video Values Preset": "CUSTOM",
+            "Multisampling Anti-Aliasing Mode": "CNAA2",
+            "Global Shadow Quality": "HIGH",
+            "Model/Texture Detail": "MEDIUM",
+            "Texture Filtering Mode": "ANISOTROPIC_4X",
+            "Shader Detail": "LOW",
+            "Particle Detail": "LOW",
+            "Ambient Occlusion": "DISABLED",
+            "High Dynamic Range": "PERFORMANCE",
+            "FidelityFX Super Resolution": "DISABLED (HIGHEST QUALITY)",
+            "NVIDIA Reflex Low Latency": "ENABLED"
+        }
+    },
+    "tarkov": {
+        "name": "Escape from Tarkov",
+        "editor": "mathlokz",
+        "date": "2023-11-16 00:27:36",
+        "image": "https://e7.pngegg.com/pngimages/553/536/png-clipart-escape-from-tarkov-escape-from-tarkov.png",
+        "postfx": {
+            "Brightness": "0.0",
+            "Saturation": "31",
+            "Clarity": "82",
+            "Colorfulness": "100",
+            "LumaSharpen": "10.0",
+            "AdaptiveSharpen": "3",
+            "Color grading": "Cognac",
+            "Intensity of colorgrading": "0",
+            "Colorblind mode": "NONE",
+            "Intensity of colorblind": "0"
+        }
+    }
+}

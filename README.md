@@ -18,11 +18,18 @@ Clone a development version of this repository locally
 Once you have a copy of the source, you can embed it in your Python package,
 or install it into your site-packages easily
 
+    $ cd repository_path
     $ pip3 install -r requirements.txt
 
-Then just run the main.py or the .bat file on the app folder
+NOTE: In order to run the music functions, you will also need to download ffmpeg and
+add the path of the 'bin' ffmpeg folder to the PATH on environment variable,
+you can see a more detailed explanation [here](https://www.editframe.com/guides/how-to-install-and-start-using-ffmpeg-in-under-10-minutes)
+
+Then just run the main.py on the app folder
 
     $ python3 app/main.py
+
+
 
 ## Features
 
@@ -33,6 +40,8 @@ Some of the features included on the project.
     PatchNotes -> Grab info in diversous apis and send to users.
     
     CriptoCurrency -> Grab data about token/pairs criptocurrencys.
+
+    Other Managments methods...
 
 ## Contributing
 

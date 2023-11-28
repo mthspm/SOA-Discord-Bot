@@ -1,44 +1,48 @@
-# SOA Discord Bot
+# Sons Of Anarchy Discord Bot
 
-A application built on python language using mostly discord.py and a lot of apis to grab data.
+A discord bot written in python
 
 ## Table of Contents
 
 - [Installation](#installation)
-- [Usage](#usage)
 - [Features](#features)
 - [Contributing](#contributing)
 - [License](#license)
 
 ## Installation
 
-If you want just to run the project, you can just follow the next steps:
+Clone a development version of this repository locally
 
-open the cmd(prompt command) and navigate to the path where you cloned the repository. (or just open the cmd directly on the path)
+    git clone git://github.com/mthspm/SOA-DISCORD-Bot.git
 
-pip install requirements.txt
+Once you have a copy of the source, you can embed it in your Python package,
+or install it into your site-packages easily
 
-In order to load the music features, you need also to install ffmpeg dll dependences. You can download them from :
-After downloading the files, put them somewhere on your pc or virtual enviroment(if you have created one) and them pass the path from the 'bin' folder to PATH on AMBIENT VARIABLES on your system.
+    $ pip3 install -r requirements.txt
 
-Finally, run the .bat file locate in the folder of the program. SOA.bat
+Then just run the main.py or the .bat file on the app folder
+
+    $ python3 app/main.py
 
 ## Features
 
-The bot have PatchNotes alerts, Criptoprice grabber, a species of cripto dashboard to users save data, music system with queue, diversous webscraping commands and others more commons features.
+Some of the features included on the project.
+
+    Music System -> All the basic commands to play, stop, queue.
+    
+    PatchNotes -> Grab info in diversous apis and send to users.
+    
+    CriptoCurrency -> Grab data about token/pairs criptocurrencys.
 
 ## Contributing
 
-Feel free to contribuite 
+If you'd like to contribute to the project, feel free to clone
+a development version of this repository locally.
 
 ## License
 
-MIT Licence
+MIT License
 
 ## Credits
 
-Acknowledgments and credits for any resources or individuals that contributed to your project.
-
-## Contact
-
-[[matheusdepmendonca@gmail.com](https://github.com/mthspm/)https://github.com/mthspm/]
+Develoepd by @mthspm =)

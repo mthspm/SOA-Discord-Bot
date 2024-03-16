@@ -1,9 +1,5 @@
-import requests
-import json
-import discord
-import inspect
+import requests, discord, inspect
 
-from pathlib import Path
 from discord import app_commands
 from settings import *
 from datetime import datetime
@@ -29,8 +25,7 @@ class PatchNotes:
     def __init__(self, client) -> None:
         self.client = client
         self.channel = PATCH_NOTES_CHANNEL
-
-        
+    
     def getJsonUpdates(self, url):
         try:
             response = requests.get(url)
@@ -121,16 +116,13 @@ class PatchNotes:
     async def getLatestUpdates(self):
         debug("Getting latest updates...", function="PatchNotes.getLatestUpdates", type="INFO")
 
-        games = PATCH_NOTES_DATA
-
-        for game in games:
+        for game in PATCH_NOTES_DATA:
             try:
                 if "https://api.tibiadata.com" in game["path"]:
                     currentUpdate = await self.getUpdate(game["path"], game["filepath"], node=game["node"])
                 else:
                     currentUpdate = await self.getUpdate("https://api.axsddlr.xyz" + game["path"], game["filepath"], node=game["node"])
                     
-                
                 if not currentUpdate:
                     debug(f"No new update for {game['name']}", function="PatchNotes.getLatestUpdates", type="INFO")
                     continue
@@ -175,15 +167,20 @@ class PatchNotes:
     @app_commands.describe(name="Name of the character to get info")
     async def char(self, interaction, name:str):
         """Get character info from tibia.com"""
-        url = "https://api.tibiadata.com/v3/character/" + name
+        url = "https://api.tibiadata.com/v4/character/" + name
         r = self.getJsonUpdates(url)
         user = interaction.user
         
+        try:
+            data = r["character"]
+        except KeyError:
+            await interaction.response.send_message("Something wrong with request, report to devs", ephemeral=True)
+            debug(f"Failed to load tibia api: {KeyError}", function="PatchNotes.char", type="INFO")
+            return
         if not r:
             await interaction.response.send_message("Character not found", ephemeral=True)
             debug(f"{user} Character {name} not found", function="PatchNotes.char", type="INFO")
             return
-        data = r["characters"]
         if not data["character"]["name"]:
             await interaction.response.send_message("Character not found", ephemeral=True)
             debug(f"{user} Character {name} not found", function="PatchNotes.char", type="INFO")
@@ -245,20 +242,9 @@ class PatchNotes:
         debug(f"{user} Character {name} found", function="PatchNotes.char", type="INFO")
         await interaction.response.send_message(embed=embed, ephemeral=True)
         
-    
-    
-class JournalNews:
-    def __init__(self, client) -> None:
-        self.client = client
-        self.channel = 361963508620853259
         
-
-
-
-
 
 
 #debug
 if __name__ == "__main__":
     patch = PatchNotes("client")
-    journ = JournalNews("client")

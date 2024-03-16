@@ -1,21 +1,16 @@
-import json
-import functools
-import uuid
-import requests
-import os
-import logging
-import matplotlib.pyplot as plt
-from datetime import datetime, timedelta
+import json, functools, uuid, requests, os, logging, matplotlib.pyplot as plt
+import discord
+from datetime import datetime
 from dotenv import load_dotenv
 from colorama import Fore, Style
 from urllib.parse import urlparse
 from pathlib import Path
-from collections import defaultdict
+from typing import Union
+
+logging.basicConfig(filename=f"{Path(__file__).parent}/logs/{datetime.now().strftime('%Y-%m-%d')}.log", level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
 def time_now():
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-logging.basicConfig(filename=f"{Path(__file__).parent}/logs/{datetime.now().strftime('%Y-%m-%d')}.log", level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
 def debug(message, type="INFO", function=None):
     """Print a debug message
@@ -29,7 +24,7 @@ def debug(message, type="INFO", function=None):
         None
     """
     logging.info(f"{function} {message}")
-    print(f"{time_now()}{Fore.LIGHTBLUE_EX} {type}{Style.RESET_ALL}{Fore.MAGENTA}     {function}{Style.RESET_ALL} {message}")
+    print(f"[{time_now()}]{Fore.LIGHTBLUE_EX} {type}{Style.RESET_ALL}{Fore.MAGENTA} {function}{Style.RESET_ALL} {message}")
 
 def ddbug(func):
     @functools.wraps(func)
@@ -123,6 +118,51 @@ def filter_str(string):
         string = string.replace(char, "")
     return string
 
+async def del_file(path):
+    if os.path.exists(path):
+        os.remove(path)
+        debug(f"deleted {path}", function="del_file", type="INFO")
+        return True
+    else:
+        debug(f"file {path} not found", function="del_file", type="ALERT")
+        return False
+    
+def new_exist(path, data):
+    """Check if a json file exists and create one if not with the specified data passed as argument"""
+    if not os.path.exists(path):
+        save_json(path, data)
+        debug(f"created {path}", function="new_exist", type="INFO")
+        return False
+    else:
+        return True
+
+async def AutoClearBOTMSG(channel, bot):
+    async for message in channel.history(limit=100):
+        if message.author == bot:
+            try:
+                await message.delete()
+            except discord.Forbidden:
+                # You don't have permission to delete the message
+                debug(f"Permission denied to delete message: {message.content}")
+            except discord.NotFound:
+                # Message was already deleted or doesn't exist
+                debug(f"Message not found: {message.content}")
+            except discord.HTTPException as e:
+                # Some other error occurred
+                debug(f"Failed to delete message: {message.content}. Error: {e}")
+
+async def get_member(user: discord.User, guild: Union[discord.Guild, list[discord.Guild]]) -> Union[discord.Member, discord.User]:
+    if isinstance(guild, list):
+        for g in guild:
+            member = g.get_member(user.id)
+            if member:
+                return member
+    else:
+        member = guild.get_member(user.id)
+        if member:
+            return member
+    return user
+
 class ImageManager:
     """Class to upload images to imgur"""
     def __init__(self):
@@ -172,20 +212,3 @@ class ImageManager:
         plt.close()
         return await self.upload(path)
     
-async def del_file(path):
-    if os.path.exists(path):
-        os.remove(path)
-        debug(f"deleted {path}", function="del_file", type="INFO")
-        return True
-    else:
-        debug(f"file {path} not found", function="del_file", type="ALERT")
-        return False
-    
-def new_exist(path, data):
-    """Check if a json file exists and create one if not with the specified data passed as argument"""
-    if not os.path.exists(path):
-        save_json(path, data)
-        debug(f"created {path}", function="new_exist", type="INFO")
-        return False
-    else:
-        return True

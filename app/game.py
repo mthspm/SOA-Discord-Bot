@@ -1,6 +1,3 @@
-import json
-import discord
-from discord import app_commands
 from pathlib import Path
 from settings import *
 from utils import debug, time_now, load_json, save_json, flagger

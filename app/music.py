@@ -1,20 +1,16 @@
 # Path: app/music.py
 
-import os
-import asyncio
-import random
-import discord
+import os, asyncio, random, discord
 from dotenv import load_dotenv
 from discord import app_commands
 from pytube import YouTube
+from youtubesearchpython import Search
 from pathlib import Path
 from spotipy import Spotify
 from spotipy.oauth2 import SpotifyClientCredentials
 from spotipy.exceptions import SpotifyException
 from settings import *
 from utils import debug, flagger, url_checker, filter_str, del_file
-
-
 
 class Music:
     """
@@ -53,22 +49,11 @@ class Music:
         return list(self.__dict__.keys())
     
     def __setup(self):
-        if self.description is None:
-            self.description = "No description"
-        elif len(self.description) > 512:
-            self.description = self.description[:512] + "..."
-        
-        if self.rating is None:
-            self.rating = "No Available"
-        
-        if self.views is None:
-            self.views = "No Available"
-        
-        if self.publish_date is None:
-            self.publish_date = "No Available"
-            
-        if self.artist is None:
-            self.artist = "No Available"
+        self.description = self.description[:512] + "..." if self.description and len(self.description) > 512 else "No description"
+        self.rating = self.rating if self.rating is not None else "No Available"
+        self.views = self.views if self.views is not None else "No Available"
+        self.publish_date = self.publish_date if self.publish_date is not None else "No Available"
+        self.artist = self.artist if self.artist is not None else "No Available"
         
     
 
@@ -318,43 +303,54 @@ class MusicPlayer:
     @app_commands.describe(query="The url of the song you want to play")
     async def play(self, interaction, query: str):
         """Play a song"""
-        text_channel = interaction.channel
         user = interaction.user
         debug(f"{user} requested to play {query}", function="music.MusicPlayer.play")
-
-        # Try to join the voice channel
-        await self.join(interaction)
-
-        # Check if the user is in a voice channel
-        if interaction.user.voice.channel != self.voice_client.channel:
-            await interaction.response.send_message(NOT_IN_YOUR_VOICE_CHANNEL, ephemeral=True)
-            debug(f"{user} is not in the voice channel", function="music.MusicPlayer.play", type="ERROR")
-            return False
+        result = query
         
-        # Check if the url is valid
+        # Check if query is a valid url and if not, search for the song on youtube
         if not url_checker(query):
-            await interaction.response.send_message(ENTRY_NOT_URL, ephemeral=True)
-            debug(f"{user} entered an invalid url {query}", function="music.MusicPlayer.play", type="ERROR")
-            return False
-        
+            result = Search(query, limit=1).result()
+            try:
+                if result:
+                    result = result['result'][0]['link']
+            except Exception as e:
+                await interaction.response.send_message(SONG_NOT_VALID, ephemeral=True)
+                debug(f"{user} you entered a invalid query, try to use youtube url or the music name.", function="music.MusicPlayer.play", type="ERROR")
+                return False
+            
+        # Defer the interaction response to avoid timeout during the music processation
+        await interaction.response.defer()
+
         # Create the music object and download the song
-        music = await self.download_music(query)
+        music = await self.download_music(result)
         
-        # Check if the song was downloaded
+        # Check if the music was downloaded successfully
         if not music:
-            await interaction.response.send_message(SONG_NOT_VALID, ephemeral=True)
-            debug(f"{user} entered an invalid url {query}", function="music.MusicPlayer.play", type="ERROR")
+            await interaction.followup.send(f"{user} you need to be more precise on the name", ephemeral=True)
+            debug(f"{user} failed to obtain {result}", function="music.MusicPlayer.play", type="ERROR")
             return False
         
+        # Transform the music file into a discord.FFmpegPCMAudio object
         source = discord.FFmpegPCMAudio(music.path)
         queue_song_path = source._process.args[2]
         queue_song_name = os.path.basename(queue_song_path)
         
+        # Add the music to the queue
         self.queue.append((source, queue_song_name))
         
-
+        # Try to join the voice channel
+        if not self.voice_client:
+            self.voice_client = await user.voice.channel.connect()
+            debug(f"Bot joined {user.voice.channel}", function="music.MusicPlayer.play")
+        else:
+            if self.voice_client.channel != user.voice.channel:
+                await interaction.followup.send(NOT_IN_YOUR_VOICE_CHANNEL, ephemeral=True)
+                debug(f"Bot is not in {user.voice.channel}", function="music.MusicPlayer.play", type="ERROR")
+                return False
+        
+        # Send the music info to the user
         embed = discord.Embed(
-            title=f"{music.name} requested by {str(interaction.user).capitalize()}",
+            title=f"{music.name} requested by {str(user).capitalize()}",
             description=f"Artist: {music.artist}\nURL: {music.url}",
             color=discord.Color.green()
         )
@@ -366,35 +362,37 @@ class MusicPlayer:
         embed.add_field(name="Description", value=music.description)
         embed.add_field(name="Songs in queue", value=len(self.queue))
         embed.add_field(name="Queue", value="\n".join([f"{i+1}. **{song[1]}**" for i, song in enumerate(self.queue)]), inline=False)
-        embed.set_footer(text=f"Requested by {interaction.user}")
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+        embed.set_footer(text=f"Requested by {user}")
+        await interaction.followup.send(embed=embed, ephemeral=True)
         
-        if self.running:
-            return True
-        else:
+        # Music Loop Logic 
+        if not self.running and interaction.response.is_done():
             self.running = True
-            while True:
-                try:
-                    actual_music = self.queue.pop(0)
-                    actual_path = actual_music[0]._process.args[2]
-                    self.voice_client.play(actual_music[0])
-
-                    while self.voice_client.is_playing():
-                        await asyncio.sleep(1)
-                        
-                    await self.clean_music_path(actual_music, actual_path)
-                    
-                except Exception as e:
-                    debug(f'Error {e}', function="music.MusicPlayer.play", type="ERROR")
-                    return False
+            await self.musicloop()
+            
+    async def musicloop(self):
+        """Music Loop Logic""" 
+        while True:
+            try:
+                actual_music = self.queue.pop(0)
+                actual_path = actual_music[0]._process.args[2]
+                self.voice_client.play(actual_music[0])
                 
-                if len(self.queue) == 0:
-                    self.running = False
-                    await asyncio.sleep(10)
-                    await self.leave(interaction)
-                    return True
-                else:
-                    continue
+                while self.voice_client.is_playing():
+                    await asyncio.sleep(1)
+                await self.clean_music_path(actual_music, actual_path)
+            except Exception as e:
+                debug(f'Error {e}', function="music.MusicPlayer.play", type="ERROR")
+                return False
+            
+            if len(self.queue) == 0:
+                self.running = False
+                await asyncio.sleep(10)
+                await self.voice_client.disconnect()
+                await self.clear_all_musics_path()
+                return True
+            else:
+                continue
         
     async def stop(self, interaction):
         """Stop the music, clear the queue and leave the voice channel"""

@@ -26,12 +26,11 @@ class Test:
             await interaction.response.send_message("Only the president or devs can use this command :(", ephemeral=True)
             return
         
-        await self.get_attrs(self.client)
-        await self.get_attrs(interaction)
+        embed = discord.Embed(
+            title="Player de Combate",
+            description="Aqui está o player de combate que você solicitou:",
+            color=discord.Color.blue()
+        )
+        embed.set_image(url="https://sinalpublico.com/player3/ch.php?canal=combate")
         
-        
-        
-        
-        await interaction.response.send_message("Test command, logs avaible on command prompt", ephemeral=True)
-        await interaction.edit_original_response(content="Test commands was edited")
-        
+        await interaction.response.send_message(embed=embed, ephemeral=True)

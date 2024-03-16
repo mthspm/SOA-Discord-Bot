@@ -1,9 +1,4 @@
-import asyncio
-import os
-import json
-import inspect
-import discord
-import enum
+import os, json, inspect, discord
 from decimal import Decimal
 from discord import app_commands
 from binance.client import Client

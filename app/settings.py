@@ -4,10 +4,13 @@ from datetime import datetime
 from pathlib import Path
 
 AUTHOR = "mths"
-VERSION = "1.0.2"
+VERSION = "1.0.3"
 TITLE = "Sons of Anarchy"
 
 SOA = 224900203218468864
+TIBIANTIS = 1208886343934017547
+ADM_TIBIANTIS = 1208918082752483349
+MOD_TIBIANTIS = 1209342636595613760
 PRESIDENT_ID = 308414272013336583
 VICE_PRESIDENT_ID = 527301647819341825
 DEV_ID = 1174722748292010096
@@ -15,9 +18,13 @@ BALUDO_ID = 985121876089139230
 UNHOLY_ONES_ID = 531891206678904832
 MANOFMAYHEM_ID = 1105685490088288266
 
+TEAM_CHANNEL = 1208917111020453909
+HUNTED_CHANNEL = 1209342359754506311
 PATCH_NOTES_CHANNEL = 853493671798505492
 
 INVITE = "https://discord.gg/kJ6vaJ9"
+WHOISONLINE = "https://tibiantis.online/?page=whoisonline"
+SEARCHCHAR = "https://tibiantis.online/?page=character&name={0}"
 
 ACCESS_DENIED = "Sorry but you dont have the roles to edit this setting."
 INVITE_TO_SERVER = "Here is the invite to the server: {0}"
@@ -37,9 +44,11 @@ QUEUE_FINISHED = "Queue finished!"
 
 PLAYING_SONG = "Playing {0} {1}"
 SONG_NOT_FOUND = "Song not found!"
-ENTRY_NOT_URL = "Entry is not a url from youtube!"
+ENTRY_INVALID = "Entry is not a url or songname from youtube!"
 SONG_NOT_VALID = "Your song was not validated to be processed!"
 
+AWAIT_TEAM_TASK = "Aguarde a lista de times ser atualizada/enviada!"
+AWAIT_HUNTED_TASK = "Aguarde a lista de hunteds ser atualizada/enviada!"
 ACTION_TXT = "The action you want to do on mycripto dashboard"
 TOKEN_TXT = "The token you want to check the price"
 PAIR_TXT = "The pair of the tokem you want to check the price"
@@ -91,6 +100,10 @@ HELP_MESSAGE = """
 **/cfg [game]** - Displays the best perfomance settings for a game
 **/edit [game]** - Edit the best perfomance settings for a game
 **/char [name]** - Displays info about a character from tibia.com
+
+🧙‍♂️ **TIBIANTIS COMMANDS**:
+**/check [name]** - Check the makers of the character
+**/hunted [action][name][reason]** - Manage the hunted list, actions: **add, remove, online**
 
 📻 **MUSIC COMMANDS**:
 **/musicinfo [name]** - Displays info about a song based on spotify data
